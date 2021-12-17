@@ -13,8 +13,8 @@ if #available(macOS 11, *) {
 }
 
 func main(args: [String]) -> Int32 {
-    guard CommandLine.arguments.count == 3 else {
-        fputs(String(format: "usage: %1$@ image dst\n", CommandLine.arguments[0]), stderr)
+    guard CommandLine.arguments.count == 2 else {
+        fputs(String(format: "usage: %1$@ image\n", CommandLine.arguments[0]), stderr)
         return 1
     }
 
@@ -26,7 +26,7 @@ func main(args: [String]) -> Int32 {
     // --fast (default accurate)
     // --fix (default no language correction)
 
-    let (src, dst) = (args[1], args[2])
+    let (src) = (args[1])
 
     guard let img = NSImage(byReferencingFile: src) else {
         fputs("Error: failed to load image '\(src)'\n", stderr)
@@ -42,7 +42,7 @@ func main(args: [String]) -> Int32 {
     let request = VNRecognizeTextRequest { (request, error) in
         let observations = request.results as? [VNRecognizedTextObservation] ?? []
         let obs : [String] = observations.map { $0.topCandidates(1).first?.string ?? ""}
-        try? obs.joined(separator: "\n").write(to: URL(fileURLWithPath: dst), atomically: true, encoding: String.Encoding.utf8)
+        print(obs.joined(separator: "\n"))
     }
     request.recognitionLevel = MODE
     request.usesLanguageCorrection = USE_LANG_CORRECTION
